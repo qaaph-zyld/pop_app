@@ -2,7 +2,8 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -11,85 +12,69 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-        
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-      
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Build web app
-      run: npm run build
-      
-    - name: Sync Capacitor
-      run: npx cap sync android
-      
-    - name: Make gradlew executable
-      run: chmod +x android/gradlew
-      
-    - name: Build Release APK
-      run: |
-        cd android
-        ./gradlew assembleRelease
-        
-    - name: Sign APK
-      uses: r0adkll/sign-android-release@v1
-      id: sign_app
-      with:
-        releaseDirectory: android/app/build/outputs/apk/release
-        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-        alias: ${{ secrets.ALIAS }}
-        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-        keyPassword: ${{ secrets.KEY_PASSWORD }}
-      env:
-        BUILD_TOOLS_VERSION: "34.0.0"
-      continue-on-error: true
-        
-    - name: Upload unsigned APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: pop-chat-unsigned
-        path: android/app/build/outputs/apk/release/app-release-unsigned.apk
-        
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      if: github.ref == 'refs/heads/main'
-      with:
-        tag_name: v1.0.${{ github.run_number }}
-        name: POP Chat v1.0.${{ github.run_number }}
-        body: |
-          ## POP Chat - Android Release
-          
-          **Download and install the APK to use POP Chat on Android!**
-          
-          ### Features:
-          - End-to-end encrypted P2P messaging
-          - No registration required
-          - Anonymous usernames
-          - File sharing
-          
-          ### How to Install:
-          1. Download `app-release-unsigned.apk`
-          2. Enable "Install from unknown sources" on your Android device
-          3. Install the APK
-        files: android/app/build/outputs/apk/release/app-release-unsigned.apk
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Build Debug APK
+        run: cd android && ./gradlew assembleDebug
+
+      - name: Rename APK
+        run: mv android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/pop-chat.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pop-chat-apk
+          path: android/app/build/outputs/apk/debug/pop-chat.apk
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: POP Chat v1.0.${{ github.run_number }}
+          body: |
+            ## POP Chat - Android Release
+            
+            Download and install the APK to use POP Chat on Android!
+            
+            ### Features
+            - End-to-end encrypted P2P messaging
+            - No registration required
+            - Anonymous usernames
+            - File sharing
+            
+            ### How to Install
+            1. Download pop-chat.apk
+            2. Enable Install from unknown sources on your Android device
+            3. Install the APK
+          files: android/app/build/outputs/apk/debug/pop-chat.apk
+          draft: false
+          prerelease: false
