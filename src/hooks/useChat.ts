@@ -135,7 +135,8 @@ export function useChat() {
     
     try {
       // Parse invite code
-      const [keyString, encodedOffer] = inviteCode.split('|');
+      const normalizedCode = inviteCode.replace(/\s/g, '');
+      const [keyString, encodedOffer] = normalizedCode.split('|');
       
       if (!keyString || !encodedOffer) {
         throw new Error('Invalid invite code');
@@ -165,7 +166,8 @@ export function useChat() {
     if (!connectionRef.current) return;
     
     try {
-      const answer = decodeOffer(answerCode);
+      const normalizedAnswerCode = answerCode.replace(/\s/g, '');
+      const answer = decodeOffer(normalizedAnswerCode);
       await connectionRef.current.completeConnection(answer);
       
       // Send username to peer
@@ -181,6 +183,8 @@ export function useChat() {
       setScreen('chat');
     } catch (error) {
       console.error('Failed to complete connection:', error);
+      // Reset connection state so UI is not stuck in 'connecting'
+      connectionRef.current?.disconnect();
       addSystemMessage('Failed to connect. Invalid answer code.');
     }
   }, [username, addSystemMessage]);

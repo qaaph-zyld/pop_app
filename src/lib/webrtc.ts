@@ -294,6 +294,7 @@ export function encodeOffer(offer: ConnectionOffer): string {
 
 // Decode connection offer from string
 export function decodeOffer(encoded: string): ConnectionOffer {
-  const json = atob(encoded);
+  const normalized = encoded.trim().replace(/\s/g, '');
+  const json = atob(normalized);
   return JSON.parse(json);
 }
