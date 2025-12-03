@@ -19,17 +19,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version: 20
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
-          java-version: "17"
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+          distribution: temurin
+          java-version: 17
 
       - name: Install dependencies
         run: npm ci
@@ -60,21 +56,7 @@ jobs:
         with:
           tag_name: v1.0.${{ github.run_number }}
           name: POP Chat v1.0.${{ github.run_number }}
-          body: |
-            ## POP Chat - Android Release
-            
-            Download and install the APK to use POP Chat on Android!
-            
-            ### Features
-            - End-to-end encrypted P2P messaging
-            - No registration required
-            - Anonymous usernames
-            - File sharing
-            
-            ### How to Install
-            1. Download pop-chat.apk
-            2. Enable Install from unknown sources on your Android device
-            3. Install the APK
+          body: POP Chat Android App - End-to-end encrypted P2P messaging
           files: android/app/build/outputs/apk/debug/pop-chat.apk
           draft: false
           prerelease: false
