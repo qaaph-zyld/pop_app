@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download POP Chat</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #030712 0%, #0f172a 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #10b981, #34d399);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: #9ca3af;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      color: #10b981;
+    }
+    .card p {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(16,185,129,0.3);
+    }
+    .steps {
+      text-align: left;
+      margin-top: 12px;
+    }
+    .steps li {
+      color: #d1d5db;
+      margin: 8px 0;
+      padding-left: 8px;
+    }
+    .back-link {
+      margin-top: 2rem;
+      color: #6b7280;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      color: #10b981;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📱 POP Chat</h1>
+    <p class="subtitle">End-to-end encrypted P2P messaging</p>
+    
+    <div class="card">
+      <h2>🌐 Web App (Recommended)</h2>
+      <p>Use POP Chat directly in your browser. Works on all devices!</p>
+      <a href="/" class="btn">Open Web App</a>
+    </div>
+    
+    <div class="card">
+      <h2>📲 Install on Android</h2>
+      <p>Two ways to use POP Chat on Android:</p>
+      <ol class="steps">
+        <li><strong>Install as an app from the browser</strong> (recommended):
+          <ul>
+            <li>Open <strong>pop-secure-chat-app.netlify.app</strong> in Chrome</li>
+            <li>Tap the <strong>⋮ menu</strong> (three dots)</li>
+            <li>Select <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></li>
+          </ul>
+        </li>
+        <li style="margin-top:12px;"><strong>Or install the APK directly</strong> (for advanced users):</li>
+      </ol>
+      <a
+        href="https://github.com/qaaph-zyld/pop_app/releases/download/v1.0.0/pop-chat.apk"
+        class="btn"
+      >
+        Download Android APK
+      </a>
+    </div>
+    
+    <div class="card">
+      <h2>🍎 Install on iPhone/iPad</h2>
+      <p>Add POP Chat to your home screen:</p>
+      <ol class="steps">
+        <li>Open the app in <strong>Safari</strong></li>
+        <li>Tap the <strong>Share button</strong> (square with arrow)</li>
+        <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
+        <li>Tap <strong>"Add"</strong> to confirm</li>
+      </ol>
+    </div>
+    
+    <a href="/" class="back-link">← Back to App</a>
+  </div>
+</body>
+</html>

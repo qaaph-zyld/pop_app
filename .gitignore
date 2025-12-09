@@ -35,3 +35,7 @@ android/build/
 
 # Capacitor
 capacitor.config.json
+
+# Local PWA/Android packaging artifacts
+pop-chat-apk/
+pop-chat.zip

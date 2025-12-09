@@ -1,4 +1,4 @@
-import { Shield, Users, Lock, Zap, Plus, UserPlus } from 'lucide-react';
+import { Shield, Users, Lock, Zap, Plus, UserPlus, Download } from 'lucide-react';
 
 interface HomeScreenProps {
   username: string;
@@ -80,6 +80,13 @@ export function HomeScreen({
       <div className="mt-12 text-center text-sm text-gray-600">
         <p>No registration. No tracking. No logs.</p>
         <p className="mt-1">Messages exist only between you and your peer.</p>
+        <a 
+          href="/download.html"
+          className="inline-flex items-center gap-2 mt-4 text-emerald-500 hover:text-emerald-400 transition-colors"
+        >
+          <Download className="w-4 h-4" />
+          Install on Mobile
+        </a>
       </div>
     </div>
   );

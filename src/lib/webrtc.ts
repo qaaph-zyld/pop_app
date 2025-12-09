@@ -18,12 +18,28 @@ export interface ConnectionOffer {
   iceCandidates: RTCIceCandidateInit[];
 }
 
-// STUN servers for NAT traversal (free, public servers)
+// ICE servers for NAT traversal (STUN + free TURN servers)
 const ICE_SERVERS: RTCIceServer[] = [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
   { urls: 'stun:stun2.l.google.com:19302' },
   { urls: 'stun:stun.services.mozilla.com' },
+  // Free TURN servers from Open Relay Project
+  {
+    urls: 'turn:openrelay.metered.ca:80',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
+  {
+    urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+    username: 'openrelayproject',
+    credential: 'openrelayproject',
+  },
 ];
 
 export class P2PConnection {
@@ -49,18 +65,25 @@ export class P2PConnection {
     
     this.peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
+        console.log('[WebRTC] ICE candidate:', event.candidate.type);
         this.iceCandidates.push(event.candidate.toJSON());
       }
     };
     
     this.peerConnection.onicegatheringstatechange = () => {
+      console.log('[WebRTC] ICE gathering state:', this.peerConnection?.iceGatheringState);
       if (this.peerConnection?.iceGatheringState === 'complete') {
         this.iceGatheringComplete = true;
       }
     };
     
+    this.peerConnection.oniceconnectionstatechange = () => {
+      console.log('[WebRTC] ICE connection state:', this.peerConnection?.iceConnectionState);
+    };
+    
     this.peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection?.connectionState;
+      console.log('[WebRTC] Connection state:', state);
       switch (state) {
         case 'connected':
           this.updateState('connected');
@@ -79,6 +102,7 @@ export class P2PConnection {
     };
     
     this.peerConnection.ondatachannel = (event) => {
+      console.log('[WebRTC] Data channel received');
       this.setupDataChannel(event.channel);
     };
   }
@@ -128,6 +152,7 @@ export class P2PConnection {
       throw new Error('PeerConnection not initialized');
     }
     
+    console.log('[WebRTC] Creating offer...');
     this.updateState('connecting');
     
     // Create data channel
@@ -143,6 +168,8 @@ export class P2PConnection {
     // Wait for ICE gathering to complete
     await this.waitForIceGathering();
     
+    console.log('[WebRTC] Offer created with', this.iceCandidates.length, 'ICE candidates');
+    
     return {
       type: 'offer',
       sdp: this.peerConnection.localDescription?.sdp || '',
@@ -156,6 +183,7 @@ export class P2PConnection {
       throw new Error('PeerConnection not initialized');
     }
     
+    console.log('[WebRTC] Accepting offer with', offer.iceCandidates.length, 'ICE candidates');
     this.updateState('connecting');
     
     // Set remote description
@@ -166,7 +194,11 @@ export class P2PConnection {
     
     // Add ICE candidates
     for (const candidate of offer.iceCandidates) {
-      await this.peerConnection.addIceCandidate(candidate);
+      try {
+        await this.peerConnection.addIceCandidate(candidate);
+      } catch (e) {
+        console.warn('[WebRTC] Failed to add ICE candidate:', e);
+      }
     }
     
     // Create answer
@@ -175,6 +207,8 @@ export class P2PConnection {
     
     // Wait for ICE gathering
     await this.waitForIceGathering();
+    
+    console.log('[WebRTC] Answer created with', this.iceCandidates.length, 'ICE candidates');
     
     return {
       type: 'answer',
@@ -189,35 +223,46 @@ export class P2PConnection {
       throw new Error('PeerConnection not initialized');
     }
     
+    console.log('[WebRTC] Completing connection with', answer.iceCandidates.length, 'ICE candidates');
+    
     await this.peerConnection.setRemoteDescription({
       type: 'answer',
       sdp: answer.sdp,
     });
     
     for (const candidate of answer.iceCandidates) {
-      await this.peerConnection.addIceCandidate(candidate);
+      try {
+        await this.peerConnection.addIceCandidate(candidate);
+      } catch (e) {
+        console.warn('[WebRTC] Failed to add ICE candidate:', e);
+      }
     }
+    
+    console.log('[WebRTC] Connection setup complete, waiting for DataChannel...');
   }
   
   private waitForIceGathering(): Promise<void> {
     return new Promise((resolve) => {
       if (this.iceGatheringComplete || this.peerConnection?.iceGatheringState === 'complete') {
+        console.log('[WebRTC] ICE gathering already complete');
         resolve();
         return;
       }
       
       const checkInterval = setInterval(() => {
         if (this.iceGatheringComplete || this.peerConnection?.iceGatheringState === 'complete') {
+          console.log('[WebRTC] ICE gathering completed');
           clearInterval(checkInterval);
           resolve();
         }
       }, 100);
       
-      // Timeout after 5 seconds
+      // Timeout after 10 seconds (increased for TURN server gathering)
       setTimeout(() => {
+        console.log('[WebRTC] ICE gathering timeout, proceeding with', this.iceCandidates.length, 'candidates');
         clearInterval(checkInterval);
         resolve();
-      }, 5000);
+      }, 10000);
     });
   }
   
