@@ -12,4 +12,10 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
-})
+  // Vitest config (used when running `npm test`)
+  test: {
+    environment: 'node',
+    globals: true,
+    include: ['src/**/*.test.ts'],
+  } as any,
+} as any)

@@ -111,6 +111,38 @@ npx cap open android
 
 ---
 
+## 🎬 Demo Walkthrough
+
+Follow these steps to try POP quickly (web demo or local dev):
+
+1. **Open the app**  
+   - Use the [🚀 Live Demo](https://pop-app-chat.netlify.app) or run `npm run dev` and open `http://localhost:5173`.  
+   - _Screenshot placeholder:_ `docs/screenshots/pop-home.png`
+
+2. **Create a Room**  
+   - Click **Create Room** to generate a one-time invite code containing the WebRTC offer + encryption key.  
+   - Share this code with your contact via any channel (SMS, email, other messenger).  
+   - _Screenshot placeholder:_ `docs/screenshots/pop-create-room.png`
+
+3. **Join from a Second Device**  
+   - On another browser/device, click **Join Room** and paste the invite code.  
+   - The app generates a response code that completes the P2P handshake.  
+   - _Screenshot placeholder:_ `docs/screenshots/pop-join-room.png`
+
+4. **Exchange Response Code**  
+   - Paste the response code back into the first device.  
+   - Once connected, both sides see a **"Connected"** status and a secure chat screen.  
+   - _Screenshot placeholder:_ `docs/screenshots/pop-connected.png`
+
+5. **Chat & Share Files (E2E Encrypted)**  
+   - Send messages and files; everything is encrypted with AES‑256‑GCM and lives only in memory.  
+   - Closing the tab destroys the session and all data.  
+   - _Screenshot placeholder:_ `docs/screenshots/pop-chat.png`
+
+> You can replace these placeholders with real screenshots to make the portfolio story even stronger.
+
+---
+
 ## 🔒 Security
 
 ### Encryption Details
